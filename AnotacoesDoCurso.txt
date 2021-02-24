@@ -1,0 +1,28 @@
+CodeFirst
+	-Concentrar-se no domínio, através das classes (composição). Usando Fluent API ou Data Annotations.
+
+Database Fist
+	-Cria-se o banco de dados, tabelas, campos e índices.
+	-Depois pode-se fazer engenharia reversa para gerar as classes do sistema. Procedimento chamado de Scaffold e automatizado.
+	-Dá pra fazer manualmente, também.
+	-CUIDADO!!! Pois os nomes das tabelas, serão os nomes das classes.
+
+DbContext
+	-Basicamente a combinação dos padrões Unit-Of-Work e Repository.
+	-Contém métodos que leêm e gravam informações no banco de dados.
+	-Classe principal do EF Core.
+	-Responsável por:
+		-Configurar o modelo de dados
+		-Gerenciar a conexão com o BD
+		-Consultar e persistir os dados
+		-Fazer toda a rastreabilidade de objetos
+		-Materializar resultados das consultas
+		-Cache de primeiro nível (consultas anteriores, ficam no cache. Tomar CUIDADO)
+	-Método importantes
+		-OnConfiguring
+			-Informa qual o provider utilizado, string de conexão, logger, entre outras coisas.
+		-OnModelCreating
+			-Utilizado para configurar o modelo de dados.
+		-SaveChanges
+			-Coleta os dados que sofreram alterações e persistí-los na base de dados.
+

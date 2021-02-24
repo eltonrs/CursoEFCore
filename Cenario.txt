@@ -1,0 +1,37 @@
+Sistema de pedidos
+
+- Pedido
+	Id
+	ClienteId
+	IniciadoEm
+	FinalizadoEm
+	TipoFrete
+	Status
+	Observacao
+
+
+- PedidoItem
+	Id
+	PedidoId
+	ProdutoId
+	Quantidade
+	Valor
+	Desconto
+
+
+- Produto
+	Id
+	CodigoBarras
+	Descricao
+	Valor
+	Tipo
+	Ativo
+
+
+- Cliente
+	Id
+	Nome
+	Telefone
+	CEP
+	Cidade
+	Estado

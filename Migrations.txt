@@ -1,0 +1,147 @@
+***** Migrações *****
+
+https://docs.microsoft.com/pt-br/ef/core/cli/dotnet
+
+Uma espécie de versionamento do modelo de dados. Para isso, é necessário instalar 3 pacotes:
+
+1 - De forma global
+ - De qualquer prompt de comando;
+ - Comando: dotnet tool install -g dotnet-ef
+
+2 - Instalando o pacote abaixo no projeto desejado.
+Microsoft.EntityFrameworkCore.Design
+ - Através do NuGet
+
+3 - Instalando o pacote abaixo no projeto desejado.
+Microsoft.EntityFrameworkCore.Tools
+ - Através do NuGet
+ - Um SuperSet de comandos para configurar, aplicar e etc, as migrations.
+
+
+
+--- Comando que obtem os comandos comuns do EF através do NuGet PM Console: get-help EntityFrameworkCore
+
+
+
+Add-Migration               Adds a new migration.
+Drop-Database               Drops the database.
+Get-DbContext               Lists and gets information about available DbContext types.
+Get-Migration               Lists available migrations.
+Remove-Migration            Removes the last migration.
+Scaffold-DbContext          Scaffolds a DbContext and entity types for a database.
+Script-DbContext            Generates a SQL script from the DbContext. Bypasses any migrations.
+Script-Migration            Generates a SQL script from migrations.
+Update-Database             Updates the database to a specified migration.
+
+
+
+--- Gerando a primeira migração (não aplicar, só gerar)
+
+
+
+Add-Migration {nome/descricao do arquivo}
+
+> Serão gerados 3 arquivos:
+
+1 - datahora_{nome/descricao do arquivo}.cs
+  - Partial
+  - Todas as ações/comandos que serão executados na base de dados. Possiu dois procedimentos:
+	Up: executa as ações de criação/atualização e quaisquer outras de modificações desejadas.
+	Down: desfaz as ações do comando Up;
+  - Se eu quiser criar uma function/procedure durante uma determinada migração, pode ser criada no Up e dropada no Down. Tem um exemplo no "PrimeiraMigracao".
+
+2 - datahora_{nome/descricao do arquivo}.design.cs
+  - Partial
+  - Contém "a codificação" atual preaquelas entidades envolvidas. É como se fosse um histórico da codificação daquele estado do banco.
+
+3 - ModelSnapshot
+  - É criada na primeira migração.
+  - Contém o estado atual (já considerando a migração criada/nova).
+  - É utilizado pelo EF para saber quais as diferenças/modificações que são feitas a cada migração. Ou seja, é o reflexo do banco de dados, tendo esse todas as migrations aplicadas.
+
+OBS.: A cada alteração nas entidades, automaticamente é detectada pelo EF quando rodar o comando Add-Migration.
+
+
+
+--- Gerando o SQL da Migração (ções)
+
+
+
+> Necessário quando não se tem acesso ao banco de dados;
+> 0 SQL é "entregue" ao DBO para ser executado;
+
+Comandos:
+
+Script-Migration -Project <nome do projeto> -Output <caminho do arquivo.sql>
+
+O "Script-Migration" pode ser gerado para migrações feitas num determinado período. Exemplo:
+
+Script-Migration <de: migration 1> <até: migration 8> -Project <nome do projeto> -Output <caminho do arquivo.sql>
+
+
+
+--- Aplicando a migração
+
+
+
+Existem duas formas:
+
+1- Comando: Update-Database
+
+2 - Através de uma instância do contexto. Exemplo no Program.cs
+
+
+
+--- Script SQL Idempotentes
+
+
+
+> Exemplo de solução de problema com scripts idempotentes:
+- Por exemplo, migrações que contenham scripts com criação de tabelas: CREATE TABLE ...;
+- Nesse caso, se o script for executado pela segunda vez, dará erro.
+
+Comando: Script-Migration -Idempotent ...
+
+> Dessa forma, o EF simplesmente gera os script de criação, por exemplo, verificando antes se o script já foi executado.
+> Tem um exemplo em: .\Scripts\PrimeiraMigracaoIdempotente.SQL
+
+
+
+--- Rollback
+
+
+
+> Comando: Update-Database
+
+Rollback nada mais é que a execução dos comandos no procedimento "Down";
+
+Cenário. Existem dois scripts:
+
+1 - InitialMigration
+2 - CreateColumnEmail
+
+Há duas formas de fazer o Rollback:
+
+1 - Assim que for aplicada uma migração, pode ser executado o comando Remove-Migration. Irá ser feito o rollback desse último magration executado.
+2 - Utilizando o Update-Migrate 
+
+
+
+--- Migrações Pendentes
+
+
+
+Exemplo no arquivo no Program.cs
+
+
+
+--- Operações (adicionar, Consultar, Atualizar e Remover)
+
+
+
+Exemplo no arquivo no Program.cs
+- Também tem um exemplo de utilização de um logger.
+
+
+
+--- .
